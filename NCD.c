@@ -1,12 +1,17 @@
-#include <windows.h>
-#include <winsock2.h>
-#include <iphlpapi.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#include <winsock2.h>
+#include <iphlpapi.h>
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "iphlpapi.lib")
+#else
+#include <string.h>
+#endif
 
+#ifdef _WIN32
 void printError(char *functionName)
 {
     // Retrieve the system error message for the last-error code
@@ -22,11 +27,10 @@ void printError(char *functionName)
         0, NULL);
 
     printf("%s failed with error %d: %s", functionName, dw, lpMsgBuf);
-
     LocalFree(lpMsgBuf);
 }
 
-void showActiveTCPConnections()
+void showActiveTCPConnectionsWindows()
 {
     // Declare and initialize variables
     PMIB_TCPTABLE pTcpTable;
@@ -79,9 +83,42 @@ void showActiveTCPConnections()
         pTcpTable = NULL;
     }
 }
+#else
+void showActiveTCPConnectionsLinux()
+{
+    // Declare and initialize variables
+    FILE *tcpFile;
+    char line[256];
+    char localAddress[128], remAddress[128];
+    int localPort, remPort, state;
+
+    tcpFile = fopen("/proc/net/tcp", "r");
+    if (tcpFile == NULL)
+    {
+        perror("Error opening file");
+        return;
+    }
+
+    fgets(line, sizeof(line), tcpFile); // Skip first line
+
+    printf("Local Address\t\tRemote Address\t\tState\n");
+    while (fgets(line, sizeof(line), tcpFile) != NULL)
+    {
+        sscanf(line, "%*d: %64[0-9A-Fa-f]:%X %64[0-9A-Fa-f]:%X %X",
+               localAddress, &localPort, remAddress, &remPort, &state);
+        printf("%s:%d\t\t%s:%d\t\t%d\n", localAddress, localPort, remAddress, remPort, state);
+    }
+
+    fclose(tcpFile);
+}
+#endif
 
 int main()
 {
-    showActiveTCPConnections();
+#ifdef _WIN32
+    showActiveTCPConnectionsWindows();
+#else
+    showActiveTCPConnectionsLinux();
+#endif
     return 0;
 }
