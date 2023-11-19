@@ -1,6 +1,6 @@
 # NCD
 
-The Network Connection Discovery Tool (NCD) is a simple, command-line tool developed in C for Windows platforms. It provides functionality to list active TCP network connections on a Windows machine.
+The Network Connection Discovery Tool (NCD) is a simple, command-line tool developed in C for Windows/Linux platforms. It provides functionality to list active TCP network connections on a Windows/Linux machine.
 
 ---
 ## **Disclaimer**
@@ -25,16 +25,16 @@ If you do not agree to these terms, please do not use or distribute this code.
 
 ---
 ## Requirements
-- Windows Operating System
+- Windows/Linux Operating System
 - GCC Compiler for Windows (MinGW or similar)
 - Windows Software Development Kit (SDK) for access to necessary libraries and headers.
 
 ---
 ## Installation and Compilation
 1. **Clone the repository using:**
-```
-git clone https://github.com/yaron4u/NCD
-```
+   ```
+   git clone https://github.com/yaron4u/NCD
+   ```
 2. **Compilation:**
    Navigate to the directory containing the source code in your command prompt or terminal. Compile the code using the following command:
    ```
@@ -51,7 +51,6 @@ The tool will display a list of all active TCP connections including the local a
 ---
 ## Troubleshooting
 If you encounter any issues during compilation or running the tool, ensure that:
-- You are using a compatible Windows environment.
 - Necessary libraries (`ws2_32.lib` and `iphlpapi.lib`) are correctly linked.
 - The Windows SDK is properly installed and configured in your development environment.
 
